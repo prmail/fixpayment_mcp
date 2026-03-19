@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FixPayment MCP for Creditors</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="How creditors can use the FixPayment MCP (Model Context Protocol) server with AI tools to create accounts and run reports.">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #0f172a;
+            background: #f8fafc;
+            line-height: 1.6;
+        }
+        a { color: #2563eb; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .page {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 32px 16px 48px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            background: #e0f2fe;
+            color: #0369a1;
+            margin-bottom: 12px;
+        }
+        header {
+            text-align: left;
+            margin-bottom: 32px;
+        }
+        header h1 {
+            font-size: clamp(2.2rem, 4vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        header p {
+            font-size: 1.02rem;
+            color: #475569;
+            max-width: 620px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px 20px 18px;
+            box-shadow: 0 10px 30px rgba(15,23,42,0.07);
+            border: 1px solid #e2e8f0;
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .pill {
+            border-radius: 999px;
+            border: 1px solid #e2e8f0;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            color: #475569;
+            background: #f8fafc;
+        }
+        .pill.paid { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+        .section {
+            margin-top: 32px;
+        }
+        .section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+        .section p {
+            color: #475569;
+            margin-bottom: 10px;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 12px;
+        }
+        ul {
+            padding-left: 20px;
+            margin: 6px 0 10px;
+        }
+        li { margin: 2px 0 4px; }
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            background: #0f172a;
+            color: #e5e7eb;
+            border-radius: 6px;
+            padding: 2px 5px;
+            font-size: 0.85rem;
+        }
+        pre {
+            background: #020617;
+            color: #e5e7eb;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 10px 0 14px;
+        }
+        pre code { background: transparent; padding: 0; }
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .step-list {
+            counter-reset: s;
+            list-style: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+        .step-list li {
+            counter-increment: s;
+            position: relative;
+            padding-left: 32px;
+            margin: 6px 0 10px;
+        }
+        .step-list li::before {
+            content: counter(s);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            background: #1d4ed8;
+            color: #ffffff;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        .muted { color: #6b7280; font-size: 0.9rem; }
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding: 2px 6px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            color: #4b5563;
+            background: #f9fafb;
+        }
+        .tag.plan-basic { background: #ecfdf3; border-color: #bbf7d0; color: #166534; }
+        .tag.plan-reports { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+        .tag.plan-full { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+        footer {
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        @media (max-width: 720px) {
+            .hero-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <span class="badge">For Creditors</span>
+        <h1>FixPayment MCP for Creditors</h1>
+        <p>Connect your AI tools directly to the FixPayment creditor portal. Create accounts, update statuses, and run reports with your live FixPayment data.</p>
+        <p class="muted" style="margin-top:6px;">Docs: <code>https://fixpayment.org/mcp/fixpayment-mcp.html</code> · MCP server: <code>http://fixpayment.org:8000</code></p>
+    </header>
+
+    <div class="feature-grid">
+        <div class="card">
+            <h2>What you can do</h2>
+            <h3>From your AI assistant, using plain English:</h3>
+            <ul>
+                <li><strong>Create accounts</strong> (recovery or reminder) tied to your FixPayment creditor ID.</li>
+                <li><strong>Update statuses</strong> to active, paid, settled, closed, etc.</li>
+                <li><strong>Run portal-grade reports</strong> (accounts, payments, settlements, performance).</li>
+                <li><strong>List accounts</strong> in bulk, without exposing debtor PII.</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h2>FastMCP server details</h2>
+            <p class="muted" style="margin-bottom:10px;">Built on FixPayment’s production payment resolution portal used daily by creditors to recover unpaid invoices.</p>
+            <div class="label">Server name</div>
+            <code>fixpayment-cred-portal</code>
+            <div class="label" style="margin-top:8px;">Transport</div>
+            <p>Standard MCP (stdio or HTTP) using <code>fastmcp</code> in Python.</p>
+            <div class="label" style="margin-top:8px;">HTTP MCP server URL</div>
+            <p><code>http://fixpayment.org:8000</code> (your workspace or tooling may use this URL when adding a custom MCP server).</p>
+            <div class="label" style="margin-top:8px;">Auth</div>
+            <p>Every tool takes an <code>api_key</code> argument. That key maps to a <code>creditor_id</code> and a <code>plan</code> in our database.</p>
+            <div class="label" style="margin-top:8px;">Works with</div>
+            <p>You can connect this server to any MCP-enabled AI assistant (for example Claude, or other tools that support custom MCP servers). Once connected, your assistant can call tools like <code>create_account</code> or <code>accounts_report</code> directly against your FixPayment data.</p>
+            <div class="pill-row">
+                <span class="pill">Scoped per creditor</span>
+                <span class="pill paid">Free &amp; paid tools</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+        <h2>Connect from Claude and other MCP assistants</h2>
+
+        <div class="two-col">
+            <div class="card">
+                <h3>Use FixPayment from Claude</h3>
+                <ul>
+                    <li>“Create a reminder account for invoice INV‑2026‑00123 for $1,250 due next month.”</li>
+                    <li>“Show me a status and balance summary for all my reminder accounts.”</li>
+                    <li>“Close the account for debtor Jane Smith that was just fully paid.”</li>
+                </ul>
+                <p class="muted">Claude turns these into MCP tool calls like <code>create_account</code>, <code>accounts_report</code>, and <code>update_account_status</code> against your FixPayment data.</p>
+            </div>
+
+            <div class="card">
+                <h3>What your MCP client does under the hood</h3>
+                <p class="muted">Your MCP client sends simple JSON calls (tool name + arguments). You don’t have to hand‑craft them—once configured, the assistant does it for you.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Plans and tools</h2>
+        <p>All tools require an API key. Your <strong>plan</strong> controls which tools you can use:</p>
+
+        <div class="two-col">
+            <div class="card">
+                <h3>Basic (included)</h3>
+                <div class="tag-row">
+                    <span class="tag plan-basic">basic</span>
+                </div>
+                <ul>
+                    <li><code>ping</code> – connectivity and plan check.</li>
+                    <li><code>get_plan_info</code> – see which tools this key can use.</li>
+                    <li><code>get_account_summary</code> – status/type/balance for a single account.</li>
+                    <li><code>list_accounts_basic</code> – paginated list of accounts (no PII).</li>
+                    <li><code>validate_account_payload</code> – dry-run validation for creating accounts.</li>
+                </ul>
+                <p class="muted">Great for dashboards, summaries, and testing.</p>
+            </div>
+
+            <div class="card">
+                <h3>Reports</h3>
+                <div class="tag-row">
+                    <span class="tag plan-reports">reports</span>
+                </div>
+                <ul>
+                    <li><code>accounts_report</code> – status + balance breakdown (with service_type filter).</li>
+                    <li><code>payments_report</code> – totals and by-method breakdown over a date range.</li>
+                    <li><code>settlements_report</code> – totals and by-status breakdown.</li>
+                    <li><code>performance_report</code> – total collected, collection rate, monthly trend.</li>
+                </ul>
+                <p class="muted">Same numbers as your creditor “Reports” page, now inside your AI assistant.</p>
+            </div>
+
+            <div class="card">
+                <h3>Full API</h3>
+                <div class="tag-row">
+                    <span class="tag plan-full">full</span>
+                </div>
+                <ul>
+                    <li><code>create_account</code> – minimal account creation (creditor_id from your key).</li>
+                    <li><code>bulk_create_accounts</code> – bulk-create multiple accounts in one call.</li>
+                    <li><code>update_account_status</code> – change account status for your own accounts.</li>
+                    <li><code>add_account_document</code> – attach PDFs/contracts to an existing account.</li>
+                    <li>Includes everything from <strong>Basic</strong> and <strong>Reports</strong>.</li>
+                </ul>
+                <p class="muted">For deeper automation and tight integration with your own systems.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>How to use it from an AI app</h2>
+
+        <ol class="step-list">
+            <li>
+                <strong>Get an API key from FixPayment.</strong>
+            </li>
+            <li>
+                <strong>Add the MCP server in your AI tool.</strong><br>
+                <span class="muted">Use <code>http://fixpayment.org:8000</code> (HTTP) or your internal endpoint in the tool’s custom MCP server settings.</span>
+            </li>
+            <li>
+                <strong>Talk to your assistant.</strong><br>
+                <span class="muted">Ask it to create accounts, update statuses, or run FixPayment reports—it will call the MCP tools for you.</span>
+            </li>
+        </ol>
+    </section>
+
+    <section class="section">
+        <h2>Security & scope</h2>
+        <p>FixPayment’s MCP server is designed so that:</p>
+        <ul>
+            <li>Every call is authenticated via <code>api_key</code>.</li>
+            <li>Each key is restricted to a single <code>creditor_id</code>.</li>
+            <li>No admin-only operations (like deleting accounts or running global reports) are exposed here.</li>
+            <li>Plans (<code>basic</code>, <code>reports</code>, <code>full</code>) control which tools you can access.</li>
+        </ul>
+        <p class="muted">If an AI agent calls a tool above its plan, the server responds with a clear “plan required” error.</p>
+    </section>
+
+    <footer>
+        <p>To request an API key or upgrade your plan, email <a href="mailto:support@fixpayment.org">support@fixpayment.org</a>.</p>
+        <p>FixPayment MCP is currently focused on creditor-side operations only. Admin tools remain internal.</p>
+    </footer>
+</div>
+</body>
+</html>
+
