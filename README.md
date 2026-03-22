@@ -3,6 +3,8 @@
 A [FastMCP](https://github.com/jlowin/fastmcp) server exposing a creditor-facing API for the [FixPayment](https://fixpayment.org) portal.  
 Connect any MCP-enabled AI assistant (e.g. Claude) to your FixPayment account to create accounts, update statuses, and run reports — all in plain English.
 
+[![FixPayment MCP server](https://glama.ai/mcp/servers/prmail/fixpayment_mcp/badges/card.svg)](https://glama.ai/mcp/servers/prmail/fixpayment_mcp)
+
 - **MCP server URL**: `http://fixpayment.org:8000`
 - **Docs**: `https://fixpayment.org/mcp/fixpayment-mcp.html`
 - **Support**: support@fixpayment.org
